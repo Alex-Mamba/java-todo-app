@@ -3,12 +3,18 @@ import java.util.Scanner;
 
 public class TodoApp {
 
-    static ArrayList<Task> tasks = new ArrayList<>();
+    static ArrayList<Task> tasks = new ArrayList<>(TaskStorage.loadTasks());
     static Scanner scanner = new Scanner(System.in);
-
+    
     public static void main(String[] args) {
         boolean running = true;
-
+        System.out.println("Loaded " + tasks.size() + " tasks from file.");
+        if (tasks.isEmpty()) {
+            System.out.println("No tasks found. You can start adding tasks.");
+        } else {
+            System.out.println("Here are your current tasks:");
+            viewTasks();
+        }
         while (running) {
             System.out.println("\n=== TO-DO LIST MENU ===");
             System.out.println("1. Add Task");
@@ -49,6 +55,7 @@ public class TodoApp {
         System.out.print("Enter task description: ");
         String description = scanner.nextLine();
         tasks.add(new Task(description));
+        TaskStorage.saveTasks(tasks);
         System.out.println("Task added.");
     }
 
@@ -58,7 +65,7 @@ public class TodoApp {
         } else {
             for (int i = 0; i < tasks.size(); i++) {
                 Task t = tasks.get(i);
-                String status = t.isCompleted() ? "[✓]" : "[ ]";
+                String status = t.isCompleted() ? "[X]" : "[ ]";
                 System.out.println((i + 1) + ". " + status + " " + t.getDescription());
             }
         }
@@ -70,6 +77,7 @@ public class TodoApp {
         int index = Integer.parseInt(scanner.nextLine()) - 1;
         if (index >= 0 && index < tasks.size()) {
             tasks.get(index).markCompleted();
+            TaskStorage.saveTasks(tasks);
             System.out.println("Task marked as complete.");
         } else {
             System.out.println("Invalid task number.");
@@ -82,6 +90,7 @@ public class TodoApp {
         int index = Integer.parseInt(scanner.nextLine()) - 1;
         if (index >= 0 && index < tasks.size()) {
             tasks.remove(index);
+            TaskStorage.saveTasks(tasks);
             System.out.println("Task deleted.");
         } else {
             System.out.println("Invalid task number.");
