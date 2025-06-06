@@ -1,2 +1,0 @@
-Clean dishes,true
-Make bed,false
